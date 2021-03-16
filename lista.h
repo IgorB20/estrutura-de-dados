@@ -105,7 +105,7 @@ void removeFromStartOfList(TList<Type, MAX> &list){
 };
 
 
-//remove do começo da lista
+//remove do final da lista
 template <typename Type, int MAX>
 void removeFromFinalOfList(TList<Type, MAX> &list){
     if(list.amount == 0) throw "A lista está vazia";
