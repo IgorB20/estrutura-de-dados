@@ -30,6 +30,30 @@ void showList(TList<Type> list){
 }
 
 template <class Type>
+bool belong(TList<Type> list, Type data){
+    TElement<Type> *nav = list.first;
+    while(nav != nullptr){
+        if(nav->data == data) return true;
+        nav = nav->next;
+    }
+
+    return false;
+}
+
+template <class Type>
+int getIndex(TList<Type> list, Type data){
+    TElement<Type> *nav = list.first;
+    int index = 0;
+    while(nav != nullptr){
+        if(nav->data == data) return index;
+        nav = nav->next;
+        index++;
+    }
+
+    return -1;
+}
+
+template <class Type>
 TElement<Type>* createElement(Type data){
     TElement<Type> *element = new TElement<Type>;
     element->data = data;
@@ -60,6 +84,33 @@ void insertOnStartOfList(TList<Type> &list, Type data){
    list.first = element;
 }
 
+
+template <class Type>
+void insertOnListPos(TList<Type> &list, Type data, int pos){
+    if(pos < 0) throw "Tentativa de insercao em uma posicao invalida da lista!";
+
+    if(pos == 0){
+       insertOnStartOfList(list, data);
+       return;
+    }
+
+    TElement<Type> *element = createElement(data);
+    TElement<Type> *nav = list.first;
+    int count = 0;
+    while(nav != nullptr && count < (pos-1)){
+        nav = nav->next;
+        count++;
+    }
+
+    if(nav == nullptr) throw "A posição informada é maior do que o tamanho atual da lista";
+
+    element->next = nav->next;
+    nav->next = element;
+
+}
+
+
+
 template <class Type>
 void removeFromStartOfList(TList<Type> &list){
    if(list.first == nullptr) throw "List underflow";
@@ -70,19 +121,65 @@ void removeFromStartOfList(TList<Type> &list){
 }
 
 template <class Type>
-void removeFromPosOfList(TList<Type> &list, int position){
+void removeFromFinalOfList(TList<Type> &list){
+    if(list.first == nullptr) throw "List underflow";
 
-    //TRATAR ERROS
+    if(list.first->next == nullptr){
+        delete list.first;
+        list.first = nullptr;
+        return;
+    }
 
-    TElement<Type>* nav = list.first;
-    for(int i = 0; i<(position-1); i++){
+
+    TElement<Type> *nav = list.first;
+
+    while(nav->next->next != nullptr){
         nav = nav->next;
     }
+
+    TElement<Type>* elementToRemove = nav->next;
+    nav->next = nullptr;
+    delete elementToRemove;
+
+
+}
+
+template <class Type>
+void removeFromPosOfList(TList<Type> &list, int position){
+
+    if(position < 0) throw "Tentativa de remocao em uma posicao invalida da lista!";
+
+    if(position == 0){
+        removeFromStartOfList(list);
+        return;
+    }
+
+    TElement<Type>* nav = list.first;
+    int count = 0;
+    while(nav != nullptr && count < (position-1)){
+        nav = nav->next;
+        count++;
+    }
+
+    if(nav->next == nullptr) throw "A posição informada é maior do que o tamanho atual da lista";
 
     TElement<Type>* elementToDelete = nav->next;
     nav->next = elementToDelete->next;
     delete elementToDelete;
 
+}
+
+template <class Type>
+Type getItemFromList(TList<Type> &list, int pos){
+    if(pos < 0) throw "Posicao invalida da lista!";
+    TElement<Type> *nav = list.first;
+    int count = 0;
+    while(nav != nullptr && count < pos){
+        nav = nav->next;
+        count++;
+    }
+    if(nav == nullptr) throw "Posicao invalida da lista!";
+    return nav->data;
 }
 
 
