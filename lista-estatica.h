@@ -1,133 +1,119 @@
-#ifndef LISTA_H
-#define LISTA_H
+#ifndef LISTAESTATICA_H
+#define LISTAESTATICA_H
 #include <iostream>
 
-template<typename Type>
+using namespace std;
+
+template <class Type>
 struct TElement{
     Type data;
 };
 
-template <typename Type, int MAX>
-struct TList{
-    TElement<Type> elements[MAX];
+template <class Type, int maxSize>
+struct TLista{
+    TElement<Type> list[maxSize];
     int amount;
 };
 
-template <typename Type, int MAX>
-void showList(TList<Type, MAX> list){
-    if(list.amount == 0) throw "Lista vazia!";
-
-    for(int i = 0; i < list.amount; i++){
-        std::cout << list.elements[i].data << ", " << std::endl;
-    }
-    std::cout << std::endl;
-};
-
-template <typename Type, int MAX>
-void initList(TList<Type, MAX> &list){
+template <class Type, int maxSize>
+void initList(TLista<Type, maxSize> &list){
     list.amount = 0;
-};
+}
 
-template <typename Type, int MAX>
-bool belong(TList<Type, MAX> &list, Type value){
+template <class Type, int maxSize>
+void showList(TLista<Type, maxSize> array){
+    for(int i = 0; i < array.amount; i++){
+        cout << array.list[i].data << endl;
+    }
+}
+
+template <class Type, int maxSize>
+bool belong(TLista<Type, maxSize> list, Type data){
+
     for(int i = 0; i< list.amount; i++){
-        if(list.elements[i].data == value) return true;
+        if(list.list[i].data == data) return true;
     }
 
     return false;
-};
+}
 
-template <typename Type, int MAX>
-Type getData(TList<Type, MAX> &list, int position){
-    if(position >= list.amount) throw "Posição inválida!";
-    return list.elements[position].data;
-};
+template <class Type, int maxSize>
+int getIndex(TLista<Type, maxSize> list, Type data){
 
-
-//insere no final da lista
-template <typename Type, int MAX>
-void pushToList(TList<Type, MAX> &list, Type value){
-    if(list.amount == MAX) throw "A lista está cheia!";
-
-    TElement<Type> element;
-    element.data = value;
-    list.elements[list.amount] = element;
-    list.amount++;
-};
-
-
-//insere no começo da lista
-template <typename Type, int MAX>
-void unshiftToList(TList<Type, MAX> &list, Type value){
-    if(list.amount == MAX) throw "A lista está cheia!";
-
-    TElement<Type> element;
-    element.data = value;
-    for(int i = list.amount-1; i >= 0; i--){
-        list.elements[i+1] = list.elements[i];
+    for(int i = 0; i< list.amount; i++){
+        if(list.list[i].data == data) return i;
     }
 
-    list.elements[0] = element;
-    list.amount++;
-};
+    return -1;
+}
 
-//insere em indice especifico da lista
-template <typename Type, int MAX>
-void pushToPositionOfList(TList<Type, MAX> &list, Type value, int position){
+template <class Type, int maxSize>
+void addToFinalOfList(TLista<Type, maxSize> &array, int value){
+    array.list[array.amount].data = value;
+    array.amount++;
+}
 
-    if(position > list.amount) throw "Você não pode inserir nessa posição!";
-    if(list.amount == MAX) throw "A lista está cheia!";
+template <class Type, int maxSize>
+void addToStartOfList(TLista<Type, maxSize> &array, Type value){
 
-    TElement<Type> element;
-    element.data = value;
+    if(array.amount == maxSize) throw "A lista está cheia!";
 
-    for(int i = list.amount-1; i >= position; i--){
-        list.elements[i+1] = list.elements[i];
+    for(int i = array.amount-1; i >= 0; i--){
+        array.list[i+1] = array.list[i];
     }
+    array.list[0].data = value;
+    array.amount++;
+}
 
-    list.elements[position] = element;
-    list.amount++;
-};
+template <class Type, int maxSize>
+void addToPosition(TLista<Type, maxSize> &array, Type value, int position){
 
+    if(position < 0) throw "Posicao invalida!";
+    if(position > array.amount) throw "Você não pode inserir nessa posição!";
+    if(array.amount == maxSize) throw "A lista está cheia!";
 
-//remove do começo da lista
-template <typename Type, int MAX>
-void removeFromStartOfList(TList<Type, MAX> &list){
-    if(list.amount == 0) throw "A lista está vazia";
-
-    if(list.amount > 1){
-        for(int i = 1; i < list.amount; i++){
-            list.elements[i-1] = list.elements[i];
-        }
+    for(int i = array.amount-1; i >= position; i--){
+        array.list[i+1] = array.list[i];
     }
+    array.list[position].data = value;
+    array.amount++;
+}
 
-    list.amount--;
-};
+template <class Type, int maxSize>
+void removeFromFinalOfList(TLista<Type, maxSize> &array){
+    if(array.amount == 0) throw "A lista está vazia!";
+    array.amount--;
+}
 
-
-//remove do final da lista
-template <typename Type, int MAX>
-void removeFromFinalOfList(TList<Type, MAX> &list){
-    if(list.amount == 0) throw "A lista está vazia";
-    list.amount--;
-};
-
-//remove de um indice especifico da lista
-template <typename Type, int MAX>
-void removeFromPositionOfList(TList<Type, MAX> &list, int position){
-
-    if(position >= list.amount) throw "Você não pode remover desta posição!";
+template <class Type, int maxSize>
+void removeFromStartOfList(TLista<Type, maxSize> &list){
     if(list.amount == 0) throw "A lista está vazia!";
 
-    for(int i = position+1; i < list.amount; i++){
-        list.elements[i-1] = list.elements[i];
+    for(int i = 0; i < list.amount-1; i++){
+        list.list[i] = list.list[i+1];
     }
-
     list.amount--;
-};
+}
+
+template <class Type, int maxSize>
+void removeFromPositionOfList(TLista<Type, maxSize> &list, int position){
+    if(list.amount == 0) throw "A lista está vazia!";
+    if(position >= list.amount || position < 0) throw "Posicao invalida";
+
+    for(int i = position; i < list.amount; i++){
+        list.list[i] = list.list[i+1];
+    }
+    list.amount--;
+
+}
+
+template <class Type, int maxSize>
+Type getItemFromList(TLista<Type, maxSize> &list, int position){
+    if(list.amount == 0) throw "A lista está vazia!";
+    if(position >= list.amount || position < 0) throw "Posicao invalida";
+
+    return list.list[position].data;
+}
 
 
-
-
-
-#endif // LISTA_H
+#endif // LISTAESTATICA_H
