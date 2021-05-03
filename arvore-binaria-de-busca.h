@@ -2,6 +2,8 @@
 #define BINARYTREE_H
 #include <iostream>
 
+using namespace std;
+
 template <typename Type>
 struct TNode{
     int key;
@@ -47,12 +49,87 @@ void insertNode(TNode<Type> *&node, Type data, int key){
 
 template <typename Type>
 void insert(TBinaryTree<Type> &tree, Type data, int key){
-    if(tree.root == nullptr){
+    if(tree.root == nullptr){//nao precisa desse if
         tree.root = createNode(data, key);
     }else{
         insertNode(tree.root, data, key);
     }
 }
+
+template <typename Type>
+bool searchNode(TNode<Type> *&node, int key){
+    if(key == node->key){
+        return true;
+    }
+
+    if(node->left == nullptr && node->right == nullptr){
+        return false;
+    }
+
+    if(key < node->key){//go to left
+        return searchNode(node->left, key);
+    }
+    if(key > node->key){//go to right
+        return searchNode(node->right, key);
+    }
+
+
+}
+
+template <typename Type>
+bool search(TBinaryTree<Type> &tree, int key){
+   if(tree.root == nullptr) return false;
+   return searchNode(tree.root, key);
+}
+
+
+
+template <typename Type>
+void remove(TNode<Type>* &node){
+
+   TNode<Type>* apagar;
+
+   TNode<Type>* greaterNode = node->left;
+   if(greaterNode == nullptr){
+        apagar = node;
+        node = node->right;
+        delete apagar;
+        return;
+   }
+
+   TNode<Type>* pai = nullptr;
+   while(greaterNode->right != nullptr){
+       pai = greaterNode;
+       greaterNode = greaterNode->right;
+   }
+
+     greaterNode->right = node->right;
+     if(pai != nullptr){
+         pai->right = greaterNode->left;
+         greaterNode->left = node->left;
+     }
+
+  apagar = node;
+  node = greaterNode;
+  delete apagar;
+
+}
+
+template <typename Type>
+void search_remove(TNode<Type>* &node, int key){
+    if(node != nullptr){
+        if(node->key == key){
+            remove(node);
+        }else{
+            if(key > node->key){
+                search_remove(node->right, key);
+            }else{
+                search_remove(node->left, key);
+            }
+        }
+    }
+}
+
 
 //FUNÇÕES PARA IMPRIMIR
 template <typename Type>
@@ -106,4 +183,3 @@ void pos_fixa(TNode<Type> *node){
 
 
 #endif // BINARYTREE_H
-
